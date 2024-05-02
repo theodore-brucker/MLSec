@@ -34,7 +34,11 @@ class ConvAutoencoder(nn.Module):
         x = self.decoder(x)
         return x
     
+<<<<<<< HEAD
+def train_CAE(model, train_loader, optimizer, criterion, device, epochs=5, patience=2, name="CAE", checkpoint_dir="checkpoints"):
+=======
 def train_autoencoder_CAE(model, train_loader, optimizer, criterion, device, epochs=5, patience=2, name="CAE"):
+>>>>>>> 12445fa68617775c1183384ba2c84e7a15ac2b70
     model.train()
     model.to(device)
     scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=patience, verbose=True)
@@ -68,8 +72,13 @@ def train_autoencoder_CAE(model, train_loader, optimizer, criterion, device, epo
         if epochs_no_improve >= patience:
             print('Early stopping triggered')
             break
+<<<<<<< HEAD
+    torch.save(model, f'{checkpoint_dir}/{name}.pth')
+    print(f'Training complete: saved to Checkpoints/{name}.pth')
+=======
     torch.save(model, f'{data_dir}/models/{name}.pth')
     print(f'Training complete: saved to {data_dir}/models/{name}.pth')
+>>>>>>> 12445fa68617775c1183384ba2c84e7a15ac2b70
 
 def test_CAE():
     # Create a sample input tensor of size (batch_size, channels, height, width)
