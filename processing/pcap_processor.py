@@ -7,38 +7,33 @@ def extract_packet_features(packet):
     src_ip = dst_ip = src_port = dst_port = protocol = timing = None
     ttl = length = None
 
-    # Check if the packet has an IP layer
-    if IP in packet:
-        src_ip = packet[IP].src
-        dst_ip = packet[IP].dst
-        ttl = packet[IP].ttl
-        length = packet[IP].len  # Total length of the IP packet (header + data)
-        
-    # Check for TCP protocol
-    if TCP in packet:
+    if 'IP' in packet:
+        src_ip = packet['IP']['src']
+        dst_ip = packet['IP']['dst']
+        ttl = packet['IP']['ttl']
+        length = packet['IP']['len']
+
+    if 'TCP' in packet:
         protocol = 'TCP'
-        src_port = packet[TCP].sport
-        dst_port = packet[TCP].dport
-    
-    # Check for UDP protocol
-    elif UDP in packet:
+        src_port = packet['TCP']['sport']
+        dst_port = packet['TCP']['dport']
+
+    elif 'UDP' in packet:
         protocol = 'UDP'
-        src_port = packet[UDP].sport
-        dst_port = packet[UDP].dport
+        src_port = packet['UDP']['sport']
+        dst_port = packet['UDP']['dport']
 
-    # Extract timing (epoch time)
-    timing = packet.time
+    timing = packet.get('time', None)
 
-    # Create a dictionary with the packet's features
     features = {
-        'src_ip': src_ip or 'N/A',
-        'dst_ip': dst_ip or 'N/A',
-        'src_port': src_port or 'N/A',
-        'dst_port': dst_port or 'N/A',
-        'protocol': protocol or 'N/A',
-        'timing': timing or 'N/A',
-        'ttl': ttl or 'N/A',
-        'length': length or 'N/A',
+        'src_ip': src_ip,
+        'dst_ip': dst_ip,
+        'src_port': src_port,
+        'dst_port': dst_port,
+        'protocol': protocol,
+        'timing': timing,
+        'ttl': ttl,
+        'length': length,
     }
     return features
 
@@ -72,7 +67,7 @@ def read_pcap_in_batches(pcap_path, batch_size=1000):
 
 
 def init_main():
-    pcap_directory = 'C:\AWS Target\Original Network Traffic and Log data\Thursday-15-02-2018\pcap'
+    pcap_directory = 'C:\\AWS Target\\Original Network Traffic and Log data\\Thursday-15-02-2018\\pcap'
     batch_size = 1000  # Define suitable batch size
 
     # Read pcap in batches

@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-from torch.optim import Adam
-from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("cuda starting: ",torch.cuda.is_available())
 
 class SequenceAutoencoder(nn.Module):
     def __init__(self):
@@ -35,7 +35,8 @@ class SequenceAutoencoder(nn.Module):
         x = self.decoder_conv(x.permute(0, 2, 1))  # Adjusting back for ConvTranspose1D
         
         return x
-def train_SAE(model, train_loader, val_loader, criterion, optimizer, device, epochs=500, scheduler=None, patience=5):
+
+def train_autoencoder_SAE(model, train_loader, val_loader, criterion, optimizer, device, epochs=500, scheduler=None, patience=5):
     model.to(device)
     best_val_loss = float('inf')
     patience_counter = 0  # Initialize patience counter
@@ -93,4 +94,15 @@ def train_SAE(model, train_loader, val_loader, criterion, optimizer, device, epo
 
     print('Training complete')
 
-
+def test_CAE():
+    # Create a sample input tensor of size (batch_size, channels, height, width)
+    # Example dimensions: 1 image, 1 channel (e.g., grayscale), 28x28 pixels
+    input_tensor = torch.randn(64, 1, 65, 65)
+    print("Input shape:", input_tensor.shape)
+    
+    # Initialize the model
+    model = SequenceAutoencoder()
+    
+    # Forward the input tensor through the model
+    output_tensor = model(input_tensor)
+    print("Output shape:", output_tensor.shape)

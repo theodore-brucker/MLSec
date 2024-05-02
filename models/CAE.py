@@ -1,10 +1,13 @@
 import torch
 import torch.nn as nn
-from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+import os
+from dotenv import load_dotenv
 
 # Check if CUDA is available and set device accordingly
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("cuda starting: ",torch.cuda.is_available())
+data_dir = os.getenv('FLOWS_DIRECTORY')
 
 class ConvAutoencoder(nn.Module):
     def __init__(self):
@@ -31,7 +34,7 @@ class ConvAutoencoder(nn.Module):
         x = self.decoder(x)
         return x
     
-def train_CAE(model, train_loader, optimizer, criterion, device, epochs=5, patience=2, name="CAE"):
+def train_autoencoder_CAE(model, train_loader, optimizer, criterion, device, epochs=5, patience=2, name="CAE"):
     model.train()
     model.to(device)
     scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=patience, verbose=True)
@@ -65,10 +68,10 @@ def train_CAE(model, train_loader, optimizer, criterion, device, epochs=5, patie
         if epochs_no_improve >= patience:
             print('Early stopping triggered')
             break
-    torch.save(model, f'C:/Users/theob/Code/COS-475-Project/Dataset/CSE-CIC-IDS2018/{name}.pth')
-    print(f'Training complete: saved to Checkpoints/{name}.pth')
+    torch.save(model, f'{data_dir}/models/{name}.pth')
+    print(f'Training complete: saved to {data_dir}/models/{name}.pth')
 
-def test_autoencoder():
+def test_CAE():
     # Create a sample input tensor of size (batch_size, channels, height, width)
     # Example dimensions: 1 image, 1 channel (e.g., grayscale), 28x28 pixels
     input_tensor = torch.randn(64, 1, 65, 65)
